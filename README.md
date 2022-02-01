@@ -24,7 +24,7 @@
 Clone the repository using:
 
 ```
-git clone url
+git clone https://github.com/dariusdav/Norroff-Assignment-3.git
 ```
 
 ## Usage
