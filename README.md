@@ -9,7 +9,6 @@
     <img alt="License: MIT" src="https://img.shields.io/badge/License-MIT-yellow.svg" />
   </a>
 
-Noroff assignment number 2, written by Konstantinos Pascal and Darius Davidonis.
 
 ## Table of Contents
 
@@ -25,7 +24,7 @@ Noroff assignment number 2, written by Konstantinos Pascal and Darius Davidonis.
 Clone the repository using:
 
 ```
-git clone url
+git clone https://github.com/dariusdav/Norroff-Assignment-3.git
 ```
 
 ## Usage
