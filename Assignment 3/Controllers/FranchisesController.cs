@@ -56,12 +56,11 @@ namespace Assignment_3.Controllers
 
         // PUT: api/Franchises/5
         /// <summary>
-        /// Idenpotent call to update a Franchise with given Id.
+        /// Updates a franchise.
         /// </summary>
         /// <param name="id"> </param>
         /// <param name="character"></param>
-        /// <returns> A response of whether the Franchise that should be updated exist and the success 
-        /// of the operation</returns>
+        /// <returns> A response of operations sucess</returns>
         [HttpPut("{id}")]
         public async Task<IActionResult> PutFranchise(int id, FranchiseDTO franchise)
         {
@@ -69,8 +68,8 @@ namespace Assignment_3.Controllers
             {
                 return BadRequest();
             }
-
-            _context.Entry(franchise).State = EntityState.Modified;
+            
+            _context.Entry(_mapper.Map<Franchise>(franchise)).State = EntityState.Modified;
 
             try
             {
@@ -92,7 +91,11 @@ namespace Assignment_3.Controllers
         }
 
         // POST: api/Franchises
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        /// <summary>
+        /// Adds a new franchise into the database.
+        /// </summary>
+        /// <param name="franchise"></param>
+        /// <returns></returns>
         [HttpPost]
         public async Task<ActionResult<Franchise>> PostFranchise(Franchise franchise)
         {
@@ -101,7 +104,11 @@ namespace Assignment_3.Controllers
 
             return CreatedAtAction("GetFranchise", new { id = franchise.Id }, franchise);
         }
-
+        /// <summary>
+        /// Deletes a franchise from database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Franchises/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteFranchise(int id)
