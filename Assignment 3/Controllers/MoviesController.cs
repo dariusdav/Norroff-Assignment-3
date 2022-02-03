@@ -14,6 +14,7 @@ namespace Assignment_3.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [ApiConventionType(typeof(DefaultApiConventions))]
     public class MoviesController : ControllerBase
     {
         private readonly MovieCharactersDbContext _context;
@@ -45,7 +46,9 @@ namespace Assignment_3.Controllers
         public async Task<ActionResult<MovieDTO>> GetMovie(int id)
         {
             var movie = _mapper.Map<MovieDTO>(await _context.Movies.FindAsync(id));
-
+            movie.CharactersId.AddRange(await _context.Characters
+                .Select( c => c.Id)
+                .Where(c => c == id).ToListAsync());
             if (movie == null)
             {
                 return NotFound();
@@ -69,7 +72,37 @@ namespace Assignment_3.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(_mapper.Map<MovieDTO>(movie)).State = EntityState.Modified;
+            _context.Entry(_mapper.Map<Movie>(movie)).State = EntityState.Modified;
+
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!MovieExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            return NoContent();
+        }
+
+        [HttpPut("{id}/characters")]
+        public async Task<IActionResult> PutCharactersIntoMovie(int id, int[] characterIds)
+        {
+            Movie movie = _context.Movies.Find(id);
+            if (id != movie.Id)
+            {
+                return BadRequest();
+            }
+            //movie.Characters.Add(characterIds);
+            _context.Entry(_mapper.Map<Movie>(movie)).State = EntityState.Modified;
 
             try
             {
@@ -97,12 +130,12 @@ namespace Assignment_3.Controllers
         /// <param name="movie"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Movie>> PostMovie(Movie movie)
+        public async Task<ActionResult<MovieDTO>> PostMovie(MovieCreateDTO movie)
         {
-            _context.Movies.Add(movie);
+            Movie  m = _context.Movies.Add(_mapper.Map<Movie>(movie)).Entity;
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMovie", new { id = movie.Id }, movie);
+            return CreatedAtAction("GetMovie", new { id = m.Id }, movie);
         }
         /// <summary>
         /// Deletes a movie from the database.

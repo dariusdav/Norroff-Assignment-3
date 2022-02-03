@@ -1,11 +1,10 @@
-﻿namespace Assignment_3.models.DTO.Character
+﻿namespace Assignment_3.Models.DTO.Character
 {
     /// <summary>
-    /// DataTransferObject used for updating  and interacting with the Character object.
+    /// DTO class without ID for creating a character since the ID is assigned automatically.
     /// </summary>
-    public class CharacterDTO
+    public class CharacterCreateDTO
     {
-        public int Id { get; set; }
         public string Name { get; set; }
 
         public string Alias { get; set; }

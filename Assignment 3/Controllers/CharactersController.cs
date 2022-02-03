@@ -9,6 +9,7 @@ using Assignment_3.models;
 using Assignment_3.models.Domain;
 using AutoMapper;
 using Assignment_3.models.DTO.Character;
+using Assignment_3.Models.DTO.Character;
 
 namespace Assignment_3.Controllers
 {
@@ -93,6 +94,7 @@ namespace Assignment_3.Controllers
 
             return NoContent();
         }
+      
 
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
@@ -102,12 +104,13 @@ namespace Assignment_3.Controllers
         /// <param name="character"></param>
         /// <returns>API call response</returns>
         [HttpPost]
-        public async Task<ActionResult<Character>> PostCharacter(CharacterDTO character)
+        public async Task<ActionResult<CharacterCreateDTO>> PostCharacter(CharacterCreateDTO character)
         {
-            _context.Characters.Add(_mapper.Map<Character>(character));
+            var a = _context.Characters.Add(_mapper.Map<Character>(character));
+            Character ch = a.Entity;
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetCharacter", new { id = character.Id }, character);
+            return CreatedAtAction("GetCharacter", new { id = ch.Id }, character);
         }
 
         // DELETE: api/Characters/5
