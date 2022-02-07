@@ -45,10 +45,9 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDTO>> GetMovie(int id)
         {
-            var movie = _mapper.Map<MovieDTO>(await _context.Movies.FindAsync(id));
-            movie.CharactersId.AddRange(await _context.Characters
-                .Select( c => c.Id)
-                .Where(c => c == id).ToListAsync());
+            var movie = _mapper.Map<MovieDTO>(await _context.Movies
+                .Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == id));
+
             if (movie == null)
             {
                 return NotFound();
