@@ -101,7 +101,12 @@ namespace Assignment_3.Controllers
             {
                 return BadRequest();
             }
-            //movie.Characters.Add(characterIds);
+            List<Character> cList = new();
+            for (int i = 0; i < characterIds.Length; i++)
+            {
+               cList.Add(_context.Characters.Where(c => c.Id == characterIds[i]).First());
+            }
+            movie.Characters = cList;     
             _context.Entry(_mapper.Map<Movie>(movie)).State = EntityState.Modified;
 
             try

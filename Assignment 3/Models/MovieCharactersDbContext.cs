@@ -16,7 +16,7 @@ namespace Assignment_3.models
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer("Data Source = ND-5CG92747KC\\SQLEXPRESS; Initial Catalog= Movie Characters Db; Integrated Security = True;");
+            optionsBuilder.UseSqlServer("Data Source =DESKTOP-NJTO29J\\SQLEXPRESS; Initial Catalog= Movie Characters Db; Integrated Security = True;");
         }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
