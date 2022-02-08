@@ -10,6 +10,7 @@ using Assignment_3.models.Domain;
 using AutoMapper;
 using Assignment_3.Models.DTO.Movie;
 using Assignment_3.models.DTO.Character;
+using Assignment_3.services;
 
 namespace Assignment_3.Controllers
 {
@@ -20,11 +21,13 @@ namespace Assignment_3.Controllers
     {
         private readonly MovieCharactersDbContext _context;
         private readonly IMapper _mapper;
+        private readonly MovieService _movieService;
 
         public MoviesController(MovieCharactersDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _movieService = new(context, _mapper);
         }
 
         /// <summary>
@@ -35,7 +38,7 @@ namespace Assignment_3.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MovieDTO>>> GetMovies()
         {
-            return _mapper.Map<List<MovieDTO>>(await _context.Movies.ToListAsync());
+            return await _movieService.GetMovies();
         }
         /// <summary>
         /// Gets a specific movie from the database.
@@ -46,9 +49,7 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MovieDTO>> GetMovie(int id)
         {
-            var movie = _mapper.Map<MovieDTO>(await _context.Movies
-                .Include(m => m.Characters).FirstOrDefaultAsync(m => m.Id == id));
-
+            var movie = await _movieService.GetMovie(id);
             if (movie == null)
             {
                 return NotFound();
@@ -64,15 +65,12 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}/characters")]
         public async Task<ActionResult<List<CharacterDTO>>> GetCharactersByMovieId(int id)
         {
-            List<CharacterDTO> characterDTOs = _mapper.Map<List<CharacterDTO>>(await _context.Movies
-                .Where(m => m.Id == id)
-                .SelectMany(m => m.Characters)
-                .Select(c => c).ToListAsync());
+
             if (await _context.Movies.FindAsync(id) == null)
             {
                 return NotFound();
             }
-            return characterDTOs;
+            return await _movieService.GetCharacters(id);
         }
         /// <summary>
         /// Updates a particular movie from database
@@ -90,7 +88,7 @@ namespace Assignment_3.Controllers
                 return BadRequest();
             }
 
-            _context.Entry(_mapper.Map<Movie>(movie)).State = EntityState.Modified;
+            _movieService.PutMovie(movie);
 
             try
             {
@@ -124,12 +122,7 @@ namespace Assignment_3.Controllers
             {
                 return BadRequest();
             }
-            List<Character> cList = new();
-            for (int i = 0; i < characterIds.Length; i++)
-            {
-               cList.Add(_context.Characters.Where(c => c.Id == characterIds[i]).First());
-            }
-            movie.Characters = cList;     
+            movie.Characters = _movieService.PutCharacters(characterIds);
             _context.Entry(_mapper.Map<Movie>(movie)).State = EntityState.Modified;
 
             try
@@ -160,7 +153,7 @@ namespace Assignment_3.Controllers
         [HttpPost]
         public async Task<ActionResult<MovieDTO>> PostMovie(MovieCreateDTO movie)
         {
-            Movie  m = _context.Movies.Add(_mapper.Map<Movie>(movie)).Entity;
+            Movie  m = _movieService.PostMovie(movie);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMovie", new { id = m.Id }, movie);
@@ -179,8 +172,7 @@ namespace Assignment_3.Controllers
             {
                 return NotFound();
             }
-
-            _context.Movies.Remove(movie);
+            _movieService.DeleteMovie(movie);
             await _context.SaveChangesAsync();
 
             return NoContent();

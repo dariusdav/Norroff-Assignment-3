@@ -36,6 +36,20 @@ namespace Assignment_3.models
                     " was established by crossing over common plot elements, settings," +
                     " cast, and characters."
                 });
+            modelBuilder.Entity<Franchise>().HasData(
+                new Franchise
+                {
+                    Id = 2,
+                    Name = "Lord Of The Rings",
+                    Description = " Rings and hobbits and MY AXE."
+                });
+            modelBuilder.Entity<Franchise>().HasData(
+             new Franchise
+             {
+                 Id = 3,
+                 Name = "DCEU",
+                 Description = " because nr1 exists."
+             });
             modelBuilder.Entity<Movie>().HasData(
                 new Movie { Id = 1,Title = "Iron Man", 
                     Director= "Jon Favreau", 
