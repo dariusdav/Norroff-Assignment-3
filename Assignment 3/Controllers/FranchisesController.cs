@@ -12,6 +12,7 @@ using Assignment_3.models.DTO.Franchise;
 using Assignment_3.Models.DTO.Movie;
 using Assignment_3.Models.DTO.Franchise;
 using Assignment_3.models.DTO.Character;
+using Assignment_3.services;
 
 namespace Assignment_3.Controllers
 {
@@ -22,11 +23,13 @@ namespace Assignment_3.Controllers
     {
         private readonly MovieCharactersDbContext _context;
         private readonly IMapper _mapper;
-
+        private readonly FranchiseService _franchiseService;
         public FranchisesController(MovieCharactersDbContext context, IMapper mapper)
         {
             _context = context;
             _mapper = mapper;
+            _franchiseService = new(_context, _mapper);
+            
         }
 
         // GET: api/Franchises
@@ -38,7 +41,7 @@ namespace Assignment_3.Controllers
         public async Task<ActionResult<IEnumerable<FranchiseMovieDTO>>> GetFranchises()
         {
 
-            return _mapper.Map<List<FranchiseMovieDTO>>(await _context.Franchises.ToListAsync());
+            return _mapper.Map<List<FranchiseMovieDTO>>(await _franchiseService.GetFranchises());
         }
 
         /// <summary>
@@ -48,7 +51,7 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FranchiseMovieDTO>> GetFranchiseId(int id)
         {
-            var franchise = _mapper.Map<FranchiseMovieDTO>(await _context.Franchises.Include(f => f.Movies).FirstAsync(f => f.Id == id));
+            var franchise = await _franchiseService.GetFranchise(id);
             if (franchise == null)
             {
                 return NotFound();
@@ -64,11 +67,9 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}/movies")]
         public async Task<ActionResult<List<MovieDTO>>> GetFranchise(int id)
         {
-            List<MovieDTO> movies = _mapper.Map<List<MovieDTO>>(await _context.Movies
-                .Where(m => m.FranchiseId == id).ToListAsync());
-            var franchise = await _context.Franchises.FindAsync(id);
-            //franchise.Movies = movies;
-            if (franchise == null)
+            var movies = await _franchiseService.GetFranchiseMovies(id);
+
+            if (movies == null)
             {
                 return NotFound();
             }
@@ -84,19 +85,8 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}/characters")]
         public async Task<ActionResult<List<CharacterDTO>>> GetFranchiseCharacters(int id)
         {
-            // First getting all characterID's of all the movies in the franchise
-            List<int> characterID = await _context.Movies
-                .Where(m => m.FranchiseId == id)
-                .SelectMany(m => m.Characters)
-                .Select(c => c.Id)
-                .ToListAsync();
-            // Converting all the characters to DTO's to be returned.
-            List<CharacterDTO> characters = await _context.Characters
-                .Where(c => characterID.Contains(c.Id))
-                .Select(c => _mapper.Map<CharacterDTO>(c)).ToListAsync();
-            var franchise = await _context.Franchises.FindAsync(id);
-            //franchise.Movies = movies;
-            if (franchise == null)
+            var characters = await _franchiseService.GetFranchiseCharacters(id);
+            if (characters == null)
             {
                 return NotFound();
             }
@@ -112,18 +102,12 @@ namespace Assignment_3.Controllers
         [HttpPut("{id}/movies")]
         public async Task<IActionResult> PutMoviesFranchise(int id, int[] moviesIds)
         {
-            Franchise franchise = _context.Franchises.Find(id);
+            FranchiseDTO franchise = _context.Franchises.Find(id);
             if (id != franchise.Id)
             {
                 return BadRequest();
             }
-            List<Movie> mList = new();
-            for (int i = 0; i < moviesIds.Length; i++)
-            {
-                mList.Add(_context.Movies.Where(c => c.Id == moviesIds[i]).First());
-            }
-            franchise.Movies = mList;
-            _context.Entry(_mapper.Map<Franchise>(franchise)).State = EntityState.Modified;
+            _franchiseService.PutMoviesFranchise(franchise, moviesIds);
             try
             {
                 await _context.SaveChangesAsync();
@@ -157,8 +141,8 @@ namespace Assignment_3.Controllers
             {
                 return BadRequest();
             }
-            
-            _context.Entry(_mapper.Map<Franchise>(franchise)).State = EntityState.Modified;
+
+            _franchiseService.PutFranchise(franchise);
 
             try
             {
@@ -186,9 +170,9 @@ namespace Assignment_3.Controllers
         /// <param name="franchise"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<Franchise>> PostFranchise(FranchiseCreateDTO franchise)
+        public async Task<ActionResult<FranchiseDTO>> PostFranchise(FranchiseCreateDTO franchise)
         {
-            Franchise f = _context.Franchises.Add(_mapper.Map<Franchise>(franchise)).Entity;
+            FranchiseDTO f = _franchiseService.PostFranchise(franchise);
 
             await _context.SaveChangesAsync();
 
@@ -208,12 +192,7 @@ namespace Assignment_3.Controllers
             {
                 return NotFound();
             }
-            List<Movie> m = await _context.Movies.Where(m => m.FranchiseId == id).ToListAsync();
-            foreach (Movie movie in m)
-            {
-                movie.FranchiseId = null;
-            }
-            _context.Franchises.Remove(franchise);
+            _franchiseService.DeleteFranchise(id,franchise);
             await _context.SaveChangesAsync();
 
             return NoContent();
