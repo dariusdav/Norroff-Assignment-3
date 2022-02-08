@@ -83,6 +83,10 @@ namespace Assignment_3.services
             return _context.Movies.Add(_mapper.Map<Movie>(movie)).Entity;
         }
 
+        /// <summary>
+        /// deletes a movie
+        /// </summary>
+        /// <param name="movie"></param>
         public void DeleteMovie(Movie movie) {
             _context.Movies.Remove(movie);
         }
