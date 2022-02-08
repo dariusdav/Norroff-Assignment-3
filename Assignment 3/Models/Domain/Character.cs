@@ -10,12 +10,11 @@ namespace Assignment_3.models.Domain
         [MaxLength(50)]
         public string Name { get; set; }
         [MaxLength(50)]
-
         public string Alias { get; set; }
         [MaxLength(10)]
-
         public string Gender { get; set; }
         [Url]
+        [MaxLength(500)]
         public string Picture { get; set; }
         public ICollection<Movie> Movies { get; set; }
 

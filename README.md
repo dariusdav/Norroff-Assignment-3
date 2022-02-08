@@ -15,14 +15,12 @@
 -  [Install](#install)
 -  [Usage](#usage)
 -  [Maintainers](#maintainers)
--  [Contributing](#contributing)
--  [TODO](#TODO)
 -  [License](#license)
 
 ## Overview
 A simple example Movie database API. The API has base CRUD functionality to manipulate Character, Movie and Franchise data from the database
 
-<img src="/Norroff-Assignment-3/diagram.png" >
+<img src="https://github.com/dariusdav/Norroff-Assignment-3/blob/main/diagram.png" >
 
 ## Install
 
@@ -33,19 +31,15 @@ git clone https://github.com/dariusdav/Norroff-Assignment-3.git
 ```
 
 ## Usage
- open the project and run the files
+ 1. Open the project in visual studio
+ 2. Open Nuget Package Manager (Tools -> Nuget Package Manager-> Packaga Manager Console)
+ 3. Run "update-databese" command in Nuget Package Manger Console 
+ 4. Run the Swagger API by pressing ISS Express button.
 
 
 ## Maintainers
 
 [@dariusdav](https://github.com/dariusdav)
-
-## Contributing
-
-PRs accepted.
-
-## TODO
-
 
 ## License
 

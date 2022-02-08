@@ -10,6 +10,7 @@ using Assignment_3.models.Domain;
 using AutoMapper;
 using Assignment_3.models.DTO.Character;
 using Assignment_3.Models.DTO.Character;
+using Assignment_3.services;
 
 namespace Assignment_3.Controllers
 {
@@ -20,11 +21,13 @@ namespace Assignment_3.Controllers
     {
         private readonly MovieCharactersDbContext _context;
         private readonly IMapper _mapper;
-
+        protected CharacterService _characterService;
         public CharactersController(MovieCharactersDbContext context,IMapper mapper)
         {
+            
             _context = context;
             _mapper = mapper;
+            _characterService = new(_context, _mapper);
         }
 
         // GET: api/Characters
@@ -35,7 +38,7 @@ namespace Assignment_3.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<CharacterDTO>>> GetCharacters()
         {
-            return _mapper.Map<List<CharacterDTO>>(await _context.Characters.ToListAsync());
+            return  _mapper.Map<List<CharacterDTO>>(await _characterService.GetCharacters());
         }
 
         // GET: api/Characters/5
@@ -47,7 +50,7 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<CharacterDTO>> GetCharacter(int id)
         {
-            var character = await _context.Characters.FindAsync(id);
+            var character = await _characterService.GetCharacters(id);
 
             if (character == null)
             {
@@ -73,16 +76,14 @@ namespace Assignment_3.Controllers
             {
                 return BadRequest();
             }
-            Character ch = _mapper.Map<Character>(character);
-            _context.Entry(ch).State = EntityState.Modified;
-
+            _characterService.PutCharacters(character);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!CharacterExists(id))
+                if (!_characterService.CharacterExists(id))
                 {
                     return NotFound();
                 }
@@ -123,20 +124,15 @@ namespace Assignment_3.Controllers
         public async Task<IActionResult> DeleteCharacter(int id)
         {
             var character = await _context.Characters.FindAsync(id);
+            _characterService.DeleteCharacters(character);
             if (character == null)
             {
                 return NotFound();
             }
-
-            _context.Characters.Remove(character);
-            await _context.SaveChangesAsync();
-
             return NoContent();
+
         }
 
-        private bool CharacterExists(int id)
-        {
-            return _context.Characters.Any(e => e.Id == id);
-        }
+
     }
 }

@@ -208,7 +208,11 @@ namespace Assignment_3.Controllers
             {
                 return NotFound();
             }
-
+            List<Movie> m = await _context.Movies.Where(m => m.FranchiseId == id).ToListAsync();
+            foreach (Movie movie in m)
+            {
+                movie.FranchiseId = null;
+            }
             _context.Franchises.Remove(franchise);
             await _context.SaveChangesAsync();
 
