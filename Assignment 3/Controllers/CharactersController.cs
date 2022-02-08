@@ -124,11 +124,12 @@ namespace Assignment_3.Controllers
         public async Task<IActionResult> DeleteCharacter(int id)
         {
             var character = await _context.Characters.FindAsync(id);
-            _characterService.DeleteCharacters(character);
             if (character == null)
             {
                 return NotFound();
             }
+            _characterService.DeleteCharacters(character);
+            await _context.SaveChangesAsync();
             return NoContent();
 
         }

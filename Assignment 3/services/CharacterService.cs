@@ -53,10 +53,10 @@ namespace Assignment_3.services
         /// Updates a character.
         /// </summary>
         /// <param name="character"></param>
-        public  async void DeleteCharacters(Character character)
+        public void DeleteCharacters(Character character)
         {
             _context.Characters.Remove(character);
-            await _context.SaveChangesAsync();
+           
         }
 
 

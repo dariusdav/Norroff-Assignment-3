@@ -1,4 +1,5 @@
-﻿using Assignment_3.models.Domain;
+﻿using Assignment_3.Controllers;
+using Assignment_3.models.Domain;
 using Assignment_3.models.DTO.Franchise;
 using Assignment_3.Models.DTO.Franchise;
 using Assignment_3.Models.DTO.Movie;
@@ -13,6 +14,7 @@ namespace Assignment_3.Profiles
             public FranchiseProfile()
         {
             CreateMap<Franchise, FranchiseCreateDTO>().ReverseMap();
+            CreateMap<Franchise, FranchiseDTO>().ReverseMap();
             CreateMap<Franchise, FranchiseMovieDTO>().ForMember(fdto=>fdto.Movies,
                 opt => opt.MapFrom(f => f.Movies.Select(m => m.Id).ToList())).ReverseMap();
         }

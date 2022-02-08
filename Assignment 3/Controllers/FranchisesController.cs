@@ -51,6 +51,7 @@ namespace Assignment_3.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FranchiseMovieDTO>> GetFranchiseId(int id)
         {
+
             var franchise = await _franchiseService.GetFranchise(id);
             if (franchise == null)
             {
@@ -65,7 +66,7 @@ namespace Assignment_3.Controllers
         /// <returns> returns Movies in JSON format</returns>
         // GET: api/Franchises/5
         [HttpGet("{id}/movies")]
-        public async Task<ActionResult<List<MovieDTO>>> GetFranchise(int id)
+        public async Task<ActionResult<List<MovieCreateDTO>>> GetFranchiseMovies(int id)
         {
             var movies = await _franchiseService.GetFranchiseMovies(id);
 
@@ -102,7 +103,7 @@ namespace Assignment_3.Controllers
         [HttpPut("{id}/movies")]
         public async Task<IActionResult> PutMoviesFranchise(int id, int[] moviesIds)
         {
-            FranchiseDTO franchise = _context.Franchises.Find(id);
+            Franchise franchise = _context.Franchises.Find(id);
             if (id != franchise.Id)
             {
                 return BadRequest();
@@ -135,7 +136,7 @@ namespace Assignment_3.Controllers
         /// <param name="franchise"></param>
         /// <returns></returns>
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFranchise(int id, FranchiseMovieDTO franchise)
+        public async Task<IActionResult> PutFranchise(int id, FranchiseDTO franchise)
         {
             if (id != franchise.Id)
             {
@@ -170,9 +171,9 @@ namespace Assignment_3.Controllers
         /// <param name="franchise"></param>
         /// <returns></returns>
         [HttpPost]
-        public async Task<ActionResult<FranchiseDTO>> PostFranchise(FranchiseCreateDTO franchise)
+        public async Task<ActionResult<Franchise>> PostFranchise(FranchiseCreateDTO franchise)
         {
-            FranchiseDTO f = _franchiseService.PostFranchise(franchise);
+            Franchise f = _franchiseService.PostFranchise(franchise);
 
             await _context.SaveChangesAsync();
 
