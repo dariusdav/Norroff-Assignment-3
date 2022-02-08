@@ -29,7 +29,7 @@ namespace Assignment_3.Controllers
 
         // GET: api/Characters
         /// <summary>
-        /// API call to retrieve all the characters in the database
+        /// Gets all the characters in the database.
         /// </summary>
         /// <returns>returns a list of Characters in JSON format</returns>
         [HttpGet]
@@ -40,7 +40,7 @@ namespace Assignment_3.Controllers
 
         // GET: api/Characters/5
         /// <summary>
-        /// A call to retrieve a specific Character with its id from the database
+        /// Gets a character with specified id from the database.
         /// </summary>
         /// <param name="id">The Id for the character to be provided</param>
         /// <returns> Character in JSON format</returns>
@@ -60,7 +60,7 @@ namespace Assignment_3.Controllers
         // PUT: api/Characters/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// Idenpotent call to update a character with given Id.
+        /// Updates a character with given Id.
         /// </summary>
         /// <param name="id"> </param>
         /// <param name="character"></param>
@@ -99,7 +99,7 @@ namespace Assignment_3.Controllers
         // POST: api/Characters
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         /// <summary>
-        /// API call to add a new character into the database
+        /// Adds a new character into the database.
         /// </summary>
         /// <param name="character"></param>
         /// <returns>API call response</returns>
@@ -113,6 +113,11 @@ namespace Assignment_3.Controllers
             return CreatedAtAction("GetCharacter", new { id = ch.Id }, character);
         }
 
+        /// <summary>
+        /// Deletes a character from the database.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
         // DELETE: api/Characters/5
         [HttpDelete("{id}")]
         public async Task<IActionResult> DeleteCharacter(int id)

@@ -9,6 +9,7 @@ using Assignment_3.models;
 using Assignment_3.models.Domain;
 using AutoMapper;
 using Assignment_3.Models.DTO.Movie;
+using Assignment_3.models.DTO.Character;
 
 namespace Assignment_3.Controllers
 {
@@ -27,7 +28,7 @@ namespace Assignment_3.Controllers
         }
 
         /// <summary>
-        /// Retrieves all the Movies from the database.
+        /// Gets all the Movies from the database.
         /// </summary>
         /// <returns></returns>
         // GET: api/Movies
@@ -37,7 +38,7 @@ namespace Assignment_3.Controllers
             return _mapper.Map<List<MovieDTO>>(await _context.Movies.ToListAsync());
         }
         /// <summary>
-        /// Retrieves a specific movie from the database.
+        /// Gets a specific movie from the database.
         /// </summary>
         /// <param name="id"></param>
         /// <returns></returns>
@@ -54,6 +55,24 @@ namespace Assignment_3.Controllers
             }
 
             return movie;
+        }
+        /// <summary>
+        /// Gets all characters from a movie with a given id.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}/characters")]
+        public async Task<ActionResult<List<CharacterDTO>>> GetCharactersByMovieId(int id)
+        {
+            List<CharacterDTO> characterDTOs = _mapper.Map<List<CharacterDTO>>(await _context.Movies
+                .Where(m => m.Id == id)
+                .SelectMany(m => m.Characters)
+                .Select(c => c).ToListAsync());
+            if (await _context.Movies.FindAsync(id) == null)
+            {
+                return NotFound();
+            }
+            return characterDTOs;
         }
         /// <summary>
         /// Updates a particular movie from database
@@ -91,7 +110,12 @@ namespace Assignment_3.Controllers
 
             return NoContent();
         }
-
+        /// <summary>
+        /// Updates a movie with characters with a specified array of character Id's.
+        /// </summary>
+        /// <param name="id">Id of the movie</param>
+        /// <param name="characterIds">array of character Id's</param>
+        /// <returns></returns>
         [HttpPut("{id}/characters")]
         public async Task<IActionResult> PutCharactersIntoMovie(int id, int[] characterIds)
         {

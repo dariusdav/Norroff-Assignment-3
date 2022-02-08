@@ -11,13 +11,18 @@
 
 
 ## Table of Contents
-
+-  [Overview](#Overview)
 -  [Install](#install)
 -  [Usage](#usage)
 -  [Maintainers](#maintainers)
 -  [Contributing](#contributing)
 -  [TODO](#TODO)
 -  [License](#license)
+
+## Overview
+A simple example Movie database API. The API has base CRUD functionality to manipulate Character, Movie and Franchise data from the database
+
+<img src="/Norroff-Assignment-3/diagram.png" >
 
 ## Install
 
@@ -40,8 +45,7 @@ git clone https://github.com/dariusdav/Norroff-Assignment-3.git
 PRs accepted.
 
 ## TODO
- > Replace all of the NVARCHARMAX fields.
- > Implement Crud.
+
 
 ## License
 

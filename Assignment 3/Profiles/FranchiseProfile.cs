@@ -12,9 +12,9 @@ namespace Assignment_3.Profiles
     {
             public FranchiseProfile()
         {
-            CreateMap<Franchise, FranchiseBaseDTO>();
+            CreateMap<Franchise, FranchiseCreateDTO>().ReverseMap();
             CreateMap<Franchise, FranchiseMovieDTO>().ForMember(fdto=>fdto.Movies,
-                opt => opt.MapFrom(f => f.Movies.Select(m => m.Id).ToList()));
+                opt => opt.MapFrom(f => f.Movies.Select(m => m.Id).ToList())).ReverseMap();
         }
     }
 }

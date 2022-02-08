@@ -3,12 +3,12 @@
     /// <summary>
     /// Data Transfer Object used for Franchise Get, Update And Delete Calls
     /// </summary>
-    public class FranchiseBaseDTO
+    public class FranchiseCreateDTO
     {
         public string Name { get; set; }
 
         public string Description { get; set; }
 
-        public int Id { get; set; }
+        
     }
 }
